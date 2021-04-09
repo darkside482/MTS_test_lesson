@@ -1,0 +1,5 @@
+.idea
+docker
+docker-container
+docker-compose.yml
+docker-compose.override.yml
