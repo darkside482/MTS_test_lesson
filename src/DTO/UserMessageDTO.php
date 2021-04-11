@@ -1,10 +1,10 @@
 <?php
 
-namespace App\DTO;
+namespace DTO;
 
 /**
  * Class UserMessageDTO
- * @package App\Dto
+ * @package Dto
  */
 class UserMessageDTO
 {

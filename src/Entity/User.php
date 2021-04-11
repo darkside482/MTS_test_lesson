@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Entity;
+namespace Entity;
 
 /**
  * Class User
- * @package App\Entity
+ * @package Entity
  */
 class User implements EntityInterface
 {

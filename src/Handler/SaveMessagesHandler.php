@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Handler;
+namespace Handler;
 
-use App\DB\RepositoryManager;
-use App\Dto\SaveMessagesDTO;
-use App\Entity\Message;
-use App\Entity\User;
+use DB\RepositoryManager;
+use Dto\SaveMessagesDTO;
+use Entity\Message;
+use Entity\User;
 
 /**
  * Class MessageHandler
- * @package App\Handler
+ * @package Handler
  */
 class SaveMessagesHandler implements HandlerInterface
 {
@@ -22,7 +22,7 @@ class SaveMessagesHandler implements HandlerInterface
 
     public function __invoke(SaveMessagesDTO $messages): void
     {
-        $savedMessages = [];
+        $savedMessages = ['saved' => 0, 'messageIds' => []];
 
         foreach ($messages->getMessages() as $message) {
             if ($message->getUser()->getRole() === User::ROLE_ADMIN) {
@@ -30,9 +30,13 @@ class SaveMessagesHandler implements HandlerInterface
                 $userMessage
                     ->setDate($message->getDate())
                     ->setId($message->getUserMessageDto()->getUuid())
+                    ->setUserId($message->getUser()->getUuid())
                     ->setText($message->getUserMessageDto()->getText());
 
                 $this->rm->getRepository(Message::class)->insert($userMessage);
+
+                $savedMessages['saved'] += 1;
+                $savedMessages['messageIds'][] = $userMessage->getId();
             }
         }
 

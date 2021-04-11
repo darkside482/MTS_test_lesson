@@ -1,22 +1,29 @@
 <?php
 
-namespace App\DTO;
+namespace DTO;
+
+use Cassandra\Date;
 
 class CountUserMessagesDTO
 {
-    private int $userId;
+    private string $userId;
 
-    private ?int $from;
+    private ?\DateTime $from = null;
 
-    private ?int $to;
+    private ?\DateTime $to = null;
 
-    private array $messagesCount;
+    private int $messagesCount;
 
     public function __construct(string $userId, ?int $from, ?int $to)
     {
         $this->userId = $userId;
-        $this->from = $from;
-        $this->to = $to;
+        if ($from !== null) {
+            $this->from = new \DateTime('@' . $from);
+        }
+
+        if ($to !== null) {
+            $this->to = new \DateTime('@' . $to);
+        }
     }
 
     /**
@@ -28,25 +35,25 @@ class CountUserMessagesDTO
     }
 
     /**
-     * @return int|null
+     * @return \DateTime|null
      */
-    public function getFrom(): ?int
+    public function getFrom(): ?\DateTime
     {
         return $this->from;
     }
 
     /**
-     * @return int|null
+     * @return \DateTime|null
      */
-    public function getTo(): ?int
+    public function getTo(): ?\DateTime
     {
         return $this->to;
     }
 
     /**
-     * @return array
+     * @return int
      */
-    public function getMessagesCount(): array
+    public function getMessagesCount(): int
     {
         return $this->messagesCount;
     }
@@ -56,6 +63,6 @@ class CountUserMessagesDTO
      */
     public function setMessagesCount(int $messagesCount): void
     {
-        $this->messagesCount['messagesCount'] = $messagesCount;
+        $this->messagesCount = $messagesCount;
     }
 }

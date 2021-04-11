@@ -1,31 +1,32 @@
 <?php
 
-namespace App\DB;
+namespace DB;
 
 use PDO;
 
 final class DB {
 
-    private static PDO $pdo;
+    private const DSN = 'pgsql:host=postgres_mts;port=5432;dbname=MTS;user=MTS;password=MTS';
+
+    protected static $pdo;
 
     public static function getInstance(): PDO
     {
-        if (self::$pdo) {
+        if (self::$pdo !== null) {
             return self::$pdo;
         }
 
-        $dsn = getenv('DATABASE_URL');
-
-        self::$pdo = new PDO($dsn);
+        self::$pdo = new PDO(self::DSN);
 
         return self::$pdo;
     }
 
     private function __construct(){}
 
-    private function __sleep(){}
-
-    private function __wakeup(){}
+    public function __wakeup()
+    {
+        throw new \Exception("Cannot unserialize a singleton.");
+    }
 
     private function __clone(){}
 }

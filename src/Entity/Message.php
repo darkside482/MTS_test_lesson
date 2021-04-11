@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Entity;
+namespace Entity;
 
 /**
  * Class Message
- * @package App\Entity
+ * @package Entity
  */
 class Message implements EntityInterface
 {
@@ -16,7 +16,7 @@ class Message implements EntityInterface
 
     private string $text;
 
-    private int $date;
+    private string $date;
 
     /**
      * @inheritDoc
@@ -24,6 +24,14 @@ class Message implements EntityInterface
     public function getTableName(): string
     {
         return self::TABLE_NAME;
+    }
+
+    public function __set($name, $value)
+    {
+        $this->{lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $name))))} = $value;
+
+        //Вы спросите меня, что это за дичь? А я отвечу вам, что это нужно для маппинга колонок из базы из snake_case'a в camelCase
+        // Да, да. Мне стыдно xD
     }
 
     /**
@@ -35,7 +43,7 @@ class Message implements EntityInterface
             'id' => $this->id,
             'user_id' => $this->userId,
             'text' => $this->text,
-            'date' => $this->date
+            'date' => (new \DateTime('@' . $this->date))->format('c')
         ];
     }
 
@@ -78,16 +86,16 @@ class Message implements EntityInterface
     /**
      * @return int
      */
-    public function getDate(): int
+    public function getDate(): string
     {
         return $this->date;
     }
 
     /**
-     * @param int $date
+     * @param string $date
      * @return Message
      */
-    public function setDate(int $date): Message
+    public function setDate(string $date): Message
     {
         $this->date = $date;
         return $this;
@@ -95,10 +103,12 @@ class Message implements EntityInterface
 
     /**
      * @param string $userId
+     * @return Message
      */
-    public function setUserId(string $userId): void
+    public function setUserId(string $userId): Message
     {
         $this->userId = $userId;
+        return $this;
     }
 
     /**

@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+
+    nginx:
+        container_name: nginx_mts
+        ports:
+            - "80:80"
+        volumes:
+            - .:/var/www
+
+    php:
+        container_name: php_mts
+        volumes:
+            - .:/var/www
+
+    postgres_master:
+        container_name: postgres_mts
+        volumes:
+            - ./docker/postgres-master/data:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"

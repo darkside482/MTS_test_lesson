@@ -1,9 +1,9 @@
 <?php
 
-namespace App\DB;
+namespace DB;
 
-use App\Repository\AbstractRepository;
-use App\Repository\DefaultRepository;
+use Repository\AbstractRepository;
+use Repository\DefaultRepository;
 
 class RepositoryManager
 {
@@ -16,13 +16,13 @@ class RepositoryManager
      */
     public function getRepository(string $className): AbstractRepository
     {
-        $repositoryName = ucfirst($className) . 'Repository';
+        $repositoryName = str_replace('Entity', 'Repository', ucfirst($className)) . 'Repository';
 
         if (!array_key_exists($repositoryName, $this->instances)) {
 
-            if (class_exists($repositoryName)) {
+            try {
                 $repository = new $repositoryName();
-            } else {
+            } catch (\Throwable $e) {
                 $repository = new DefaultRepository();
             }
 

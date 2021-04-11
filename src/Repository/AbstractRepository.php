@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repository;
+namespace Repository;
 
-use App\DB\DB;
-use App\Entity\EntityInterface;
+use DB\DB;
+use Entity\EntityInterface;
 use PDO;
 
 abstract class AbstractRepository
@@ -17,7 +17,8 @@ abstract class AbstractRepository
     }
 
     /**
-     * @inheritDoc
+     * @param EntityInterface $entity
+     * @return array
      */
     public function findAll(EntityInterface $entity): array
     {
@@ -28,24 +29,26 @@ abstract class AbstractRepository
     }
 
     /**
-     * @inheritDoc
+     * @param EntityInterface $entity
      */
     public function insert(EntityInterface $entity): void
     {
         $columnsValues = $entity->getColumns();
 
         $sql = 'INSERT INTO ' . $entity->getTableName() .
-            ' (' . array_keys($columnsValues) . ') VALUES ';
+            ' (' . implode(', ', array_keys($columnsValues)) . ') VALUES ';
 
         $stmtValues = [];
 
-        array_walk($columnsValues, function ($v, $k) use ($stmtValues) {
+        array_walk($columnsValues, function ($v, $k) use (&$stmtValues) {
             $stmtValues[':' . $k] = $v;
         });
 
-        $stmt = $this->db->prepare($sql . '(' . implode(', ', array_keys($stmtValues)) . ')');
+        $sql .= '(' . implode(', ', array_keys($stmtValues)) . ')';
 
-        foreach ($stmtValues as $column => $value) {
+        $stmt = $this->db->prepare($sql);
+
+        foreach ($stmtValues as $column => &$value) {
             $stmt->bindParam($column, $value);
         }
 

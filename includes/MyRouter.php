@@ -56,10 +56,10 @@ class Route{
 
                 if(strtolower($method) == strtolower($route['method'])){
 
-                    array_shift($matches);// Always remove first element. This contains the whole string
+                    array_shift($matches);
 
                     if($basepath!=''&&$basepath!='/'){
-                        array_shift($matches);// Remove basepath
+                        array_shift($matches);
                     }
 
                     call_user_func_array($route['function'], $matches);

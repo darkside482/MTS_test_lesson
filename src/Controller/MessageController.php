@@ -2,15 +2,16 @@
 
 namespace Controller;
 
-use App\DTO\CountUserMessagesDTO;
-use App\DTO\GroupUsersByMessagesDTO;
-use App\DTO\SaveMessagesDTO;
-use App\Handler\GetUserMessagesCount;
-use App\Handler\SaveMessagesHandler;
+use DTO\CountUserMessagesDTO;
+use DTO\GroupUsersByMessagesDTO;
+use DTO\SaveMessagesDTO;
+use Handler\CountUserMessagesHandler;
+use Handler\GroupUsersByMessagesHandler;
+use Handler\SaveMessagesHandler;
 
 /**
  * Class MessageController
- * @package App\Controller
+ * @package Controller
  */
 class MessageController extends AbstractController
 {
@@ -20,7 +21,7 @@ class MessageController extends AbstractController
      */
     public static function writeMessages(array $request): array
     {
-        $saveMessagesDto = new SaveMessagesDTO($request['messages']);
+        $saveMessagesDto = new SaveMessagesDTO(json_decode($request['messages'], true));
 
         /** @see SaveMessagesHandler::__invoke() */
         static::dispatch($saveMessagesDto);
@@ -29,17 +30,18 @@ class MessageController extends AbstractController
     }
 
     /**
+     * @param string $userId
      * @param array $request
      * @return array
      */
-    public static function countUserMessages(array $request): array
+    public static function countUserMessages(string $userId, array $request): array
     {
-        $countUserMessages = new CountUserMessagesDTO($request['uuid'], $request['from'] ?? null, $request['to'] ?? null);
+        $countUserMessages = new CountUserMessagesDTO($userId, $request['from'] ?? null, $request['to'] ?? null);
 
-        /** @see GetUserMessagesCount::__invoke() */
+        /** @see CountUserMessagesHandler::__invoke() */
         static::dispatch($countUserMessages);
 
-        return $countUserMessages->getMessagesCount();
+        return ['user_id' => $userId, 'messagesCount' => $countUserMessages->getMessagesCount()];
     }
 
     /**
@@ -48,9 +50,9 @@ class MessageController extends AbstractController
      */
     public static function groupUsersByMessages(array $request): array
     {
-        $groupUsersByMessages = new GroupUsersByMessagesDTO();
+        $groupUsersByMessages = new GroupUsersByMessagesDTO($request['group']);
 
-        /** @see GroupUsersHandler::__invoke() */
+        /** @see GroupUsersByMessagesHandler::__invoke() */
         static::dispatch($groupUsersByMessages);
 
         return $groupUsersByMessages->getResult();

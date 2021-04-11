@@ -1,10 +1,10 @@
 <?php
 
-namespace App\DTO;
+namespace DTO;
 
 class MessageDTO
 {
-    private int $date;
+    private string $date;
 
     private UserDTO $user;
 
@@ -18,9 +18,9 @@ class MessageDTO
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getDate(): int
+    public function getDate(): string
     {
         return $this->date;
     }

@@ -2,7 +2,7 @@
 
 namespace Controller;
 
-use App\Handler\HandlerInterface;
+use Handler\SaveMessagesHandler;
 
 abstract class AbstractController
 {
@@ -10,28 +10,19 @@ abstract class AbstractController
 
     /**
      * @param $message
-     * @throws \ReflectionException
+     * @return mixed
+     * @throws \Exception
      */
     protected static function dispatch($message)
     {
-        $classes = get_declared_classes();
 
-        foreach ($classes as $class) {
-
-            $reflection = new \ReflectionClass($class);
-
-            if ($reflection->implementsInterface(HandlerInterface::class)) {
-                $methodReflection = new \ReflectionMethod($class, self::METHOD_NAME);
-                $params = $methodReflection->getParameters();
-
-                foreach ($params as $param) {
-                    if ($param->getClass() === get_class($message)) {
-                        $handler = new $class();
-                        $handler($message);
-                        return;
-                    }
-                }
-            }
+        $className = str_replace('DTO', 'Handler', get_class($message));
+        try {
+            $class = new $className;
+        } catch (\Throwable $e) {
+            throw new \Exception('Handler not found');
         }
+
+        return $class($message);
     }
 }
