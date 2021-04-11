@@ -4,6 +4,30 @@
 
 ### Сохранение постов:
 
+Request:
+
+POST /messages
+params: 
+1) messages - 
+```
+[
+ {
+   "date": 1560719493,
+   "from": {
+    "uuid": "f4183d4f-9601-4f6b-ba10-87927c65deff",
+    "role": "user",
+    "firstName": "Jane",
+    "userName": "SpiderWoman"
+   },
+   "message": {
+    "uuid": "b95e76f0-ffcc-4c63-b62a-bb540a29694c",
+    "text": "I'm a pink lady ;)"
+   }
+  }
+]
+```
+
+Response:
 ```
 {
   "saved": 3,
@@ -12,6 +36,15 @@
 ```
 
 ### Информация по количеству сообщений за период по пользователю
+
+Request:
+
+GET /user/{userId}/messages
+1) userId (path) - uuid пользователя, по которому нужно посчитать сообщения
+2) from (query) - с какой даты (unixtime). Если не передан, будет считать сначала
+3) to (query) - по какую дату (unixtime). Если не передан, будет считать до текущего момента
+
+Response:
 ```
 {
   "uuid": "f4183d4f-9601-4f6b-ba10-87927c65deff",
@@ -20,22 +53,15 @@
 ```
 
 ### Вывести пользователей по сценариям: молчун, флудер, постер мемов
+
+Request:
+GET /user/groups
+1) type - 'silent', 'speaker', 'memeLover'. Группа пользователей, которых нужно достать
+
+Response:
 ```
 {
-  "groups": {
-    "flooders": [
-      "uuid1",
-      "uuid2"
-    ],
-    "silents": [
-      "uuid3",
-      "uuid4"
-    ],
-    "memeLovers": [
-      "uuid5",
-      "uuid6"
-    ]
-  }
+  "userIds": ["uuid1", "uuid2", "uuid3"]
 }
 ```
 
